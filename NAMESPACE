@@ -1,0 +1,10 @@
+useDynLib( parser )
+
+export( parser )
+export( grammar.symbols) 
+export( nlines )
+export( count.chars )
+export( getChilds ) 
+
+importFrom( utils, data )
+
