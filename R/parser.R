@@ -2,6 +2,18 @@ parser <- function( file, encoding = "unknown", text ){
 	if( !missing( text ) ){
 		file <- tempfile( );
 		cat( text , file = file, sep = "\n" )
+	} else if( inherits(file,"function") ){
+		source <- attr( file, "source" )
+		if( is.null(source ) ){
+			source <- deparse( file )
+		}
+		file <- tempfile( )
+		writeLines( source, file )
+	} else if( inherits( file, "connection" ) ){
+		sc <- summary( file )
+		text <- readLines( file )
+		file <- tempfile()
+		writeLines( text, file )
 	}
 	p <- .External( "do_parser", file = file, encoding = encoding )
 	data <- as.data.frame( t(attr(p,"data")) )
@@ -10,7 +22,7 @@ parser <- function( file, encoding = "unknown", text ){
 	m <- match( data$token, grammar_symbols$token )
 	data$token.desc <- as.character(grammar_symbols$desc)[ m ]
 	data$terminal <- grammar_symbols$terminal[m]
-	data$text     <- rep( "", nrow(data) )
+	data$text     <- character( nrow(data) )
 	toks <- getTokens( data= subset(data, terminal), 
 		encoding = encoding, file = file, 
 		sort = FALSE )
@@ -43,6 +55,22 @@ getChilds <- function( x, i = 0,
 	sort( all.childs )
 }
 
+getDirectChilds <- function( x, parent = 0, data = attr(x, "data") ){
+	parents <- abs( data[, "parent"] )
+	id      <- data[, "id" ]
+	id[ parents %in% parent ]
+}
+
+isTerminal <- function(x, id = 0, data = attr(x, "data") ){
+	terminal  <- data[["terminal"]]
+	ids       <- data[["id"]]
+	if( ! id %in% ids ){
+		FALSE
+	} else{
+		terminal[ ids %in% id ]
+	}
+}
+
 
 #' Gets the terminal tokens
 getTokens <- function( x, 
@@ -56,7 +84,7 @@ getTokens <- function( x,
 	} else{
 		if( is.unsorted(data[["line1"]] ) ){
 			stop( "data is not in increasing order of line1" )
-		}	
+		}
 	}
 	data.frame( id = data[, "id"], 
 		text = .External( "do_getTokens", 
@@ -108,7 +136,7 @@ grammar.symbols <- function(  ){
 #' @param file file to analyze
 #' @param encoding encoding to assume for the file
 count.chars <- function( file, encoding = "unknown" ){
-	out <- .External( "do_countchars", file = file, encoding = encoding )
+	out <- .External( "do_countchars", file = file, encoding = encoding, PACKAGE = "parser" )
 	dimnames(out) <- list( 1:nrow(out), c("char", "byte") )
 	out
 }
@@ -117,6 +145,6 @@ count.chars <- function( file, encoding = "unknown" ){
 #' 
 #' @param file file from which to count lines
 nlines <- function( file ){
-	.External( "do_nlines", file = file )
+	.External( "do_nlines", file = file, PACKAGE = "parser" )
 }
 
