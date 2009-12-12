@@ -1,4 +1,6 @@
 parser <- function( file, encoding = "unknown", text ){
+	# go to a temporary file to deal with the text argument, 
+	# functions and connections  (I know it is ugly)
 	if( !missing( text ) ){
 		file <- tempfile( );
 		cat( text , file = file, sep = "\n" )
@@ -15,15 +17,23 @@ parser <- function( file, encoding = "unknown", text ){
 		file <- tempfile()
 		writeLines( text, file )
 	}
+	
+	# this is where the actual work takes place
 	p <- .External( "do_parser", file = file, encoding = encoding )
+	
+	# formatting the results a bit
 	data <- as.data.frame( t(attr(p,"data")) )
 	colnames( data ) <- c( "line1", "col1", "byte1", 
 		 	"line2", "col2", "byte2", "token", "id", "parent" )
+	
+	# populate token.desc and terminal
 	m <- match( data$token, grammar_symbols$token )
 	data$token.desc <- as.character(grammar_symbols$desc)[ m ]
 	data$terminal <- grammar_symbols$terminal[m]
+	
+	# go back to C to grab the actual tokens
 	data$text     <- character( nrow(data) )
-	toks <- getTokens( data= subset(data, terminal), 
+	toks <- getTokens( data= data[ data$terminal, , drop = FALSE], 
 		encoding = encoding, file = file, 
 		sort = FALSE )
 	data$text[ match( toks$id, data$id) ] <- toks$text
@@ -74,7 +84,7 @@ isTerminal <- function(x, id = 0, data = attr(x, "data") ){
 
 #' Gets the terminal tokens
 getTokens <- function( x, 
-	data = subset( attr( x, "data" ), terminal ), 
+	data = attr( x, "data" )[ attr(x, "data")[["terminal"]], ], 
 	encoding = attr( x, "encoding"), 
 	file = attr( x, "file" ), 
 	sort = TRUE ){
