@@ -1,5 +1,4 @@
 \name{nlines}
-\Rdversion{1.1}
 \alias{nlines}
 \title{
 	Counts the number of lines in a file
@@ -20,7 +19,7 @@ a character string giving the name of the file
 	The number of lines of the file
 }
 \author{
-	Romain Francois <francoisromain@free.fr>
+	Romain Francois <romain@r-enthusiasts.com>
 }
 \examples{
 \dontrun{

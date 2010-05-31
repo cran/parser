@@ -1,5 +1,4 @@
 \name{parser-package}
-\Rdversion{1.1}
 \alias{parser-package}
 \docType{package}
 \title{
@@ -12,8 +11,8 @@ Detailed R source code parser
 \tabular{ll}{
 Package: \tab parser\cr
 Type: \tab Package\cr
-Version: \tab 0.0-8\cr
-Date: \tab 2010-02-12\cr
+Version: \tab 0.0-10\cr
+Date: \tab 2010-05-31\cr
 License: \tab GPL-3\cr
 LazyLoad: \tab yes\cr
 }
@@ -22,7 +21,7 @@ LazyLoad: \tab yes\cr
 \author{
 Romain Francois
 
-Maintainer: Romain Francois <francoisromain@free.fr>
+Maintainer: Romain Francois <romain@r-enthusiasts.com>
 }
 \seealso{
 	The

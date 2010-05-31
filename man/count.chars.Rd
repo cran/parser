@@ -1,5 +1,4 @@
 \name{count.chars}
-\Rdversion{1.1}
 \alias{count.chars}
 \title{
 	Counts the number of characters and bytes in each line of a file
@@ -26,7 +25,7 @@ encoding to assume for the file
 	\item{}{the number of bytes in the same line in the file}
 }
 \author{
-	Romain Francois <francoisromain@free.fr>
+	Romain Francois <romain@r-enthusiasts.com>
 }
 \seealso{
 	\code{\link{nlines}}, \code{\link{parse}}

@@ -1,5 +1,4 @@
 \name{getChilds}
-\Rdversion{1.1}
 \alias{getChilds}
 \title{
 Get the child expression of an expression in the parse tree
@@ -27,7 +26,7 @@ An integer vector giving all the ids of symbols that
 are childs of one of the parent expression
 }
 \author{
-Romain Francois <francoisromain@free.fr>
+Romain Francois <romain@r-enthusiasts.com>
 }
 
 \seealso{
