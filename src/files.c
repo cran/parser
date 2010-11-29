@@ -4,6 +4,32 @@
 static Rboolean known_to_be_utf8 = FALSE ;
 static Rboolean known_to_be_latin1 = FALSE ;
 
+Rboolean get_latin1(){ return known_to_be_latin1 ; }
+void set_latin1( Rboolean value ) { known_to_be_latin1 = value ; }
+    
+Rboolean get_utf8(){ return known_to_be_utf8 ; }
+void set_utf8(Rboolean value) { known_to_be_utf8 = value ; }
+
+/** 
+ * same as _fgetc but without the \r business
+ */
+#ifdef Win32
+inline int __fgetc(FILE* fp){
+    int c;
+    static int nexteof=0;
+    if (nexteof) {
+       nexteof = 0;
+       return R_EOF;
+    }
+    c = fgetc(fp);
+    if (c==EOF) {
+       nexteof = 1;
+       return '\n';
+    }
+    return c ;
+}
+#endif
+
 /*{{{ nlines */
 /** 
  * Get the number of lines from a file
@@ -18,8 +44,12 @@ int nlines( const char* fname ){
 	
 	int c, previous = 0 ;
 	int n = 0 ; 
-	while( (c = _fgetc(fp)) ){
-		if( c ==  R_EOF ){
+#ifdef Win32
+	while( (c = __fgetc(fp)) ){
+#else
+	while( (c = fgetc(fp)) ){
+#endif
+if( c ==  R_EOF ){
 			break ;
 		}
 		if( c == '\n' ){
@@ -33,24 +63,13 @@ int nlines( const char* fname ){
 	}
 	return n ; 
 }
-
-/** 
- * R interface for nlines
- * 
- * nlines( file )
- */
-SEXP attribute_hidden do_nlines(SEXP args){
-	
-	SEXP result ;
-    PROTECT( result = allocVector( INTSXP, 1)  ) ;
-	INTEGER( result )[0] = nlines( CHAR(STRING_ELT(CADR(args),0) ) ) ;
-	UNPROTECT( 1 ) ; // result
-    return result;
-}
 /*}}}*/
 
 /*{{{ do_countchars */
 SEXP countchars( const char* fname, int nl){
+	
+	// to quiet warnings
+	known_to_be_latin1 = known_to_be_latin1 ;
 	
 	SEXP result ;
 	PROTECT( result = allocVector( INTSXP, nl*2) ) ;
@@ -95,38 +114,6 @@ SEXP countchars( const char* fname, int nl){
 }
 
 
-/** 
- * R interface : 
- *  count.chars( file, encoding = "unknown" )
- */
-SEXP attribute_hidden do_countchars(SEXP args){
-	
-	SEXP result ;
-    Rboolean old_latin1=known_to_be_latin1,
-	old_utf8=known_to_be_utf8, allKnown = TRUE;
-	
-	const char* fname = CHAR(STRING_ELT(CADR(args),0) ) ;
-	const char *encoding;
-	if(!isString(CADDR(args)) ){
-		error(_("invalid '%s' value"), "encoding");
-	}
-	encoding = CHAR(STRING_ELT(CADDR(args), 0)); /* ASCII */
-    known_to_be_latin1 = known_to_be_utf8 = FALSE;
-	if(streql(encoding, "latin1")) {
-		known_to_be_latin1 = TRUE;
-		allKnown = FALSE;
-    }
-    if(streql(encoding, "UTF-8"))  {
-		known_to_be_utf8 = TRUE;
-		allKnown = FALSE;
-    }
-	int nl = nlines( fname ) ;
-	PROTECT( result = countchars( fname, nl ) ) ;
-	known_to_be_latin1 = old_latin1;
-    known_to_be_utf8 = old_utf8;
-	UNPROTECT(1);
-	return result ;
-}
 /*}}}*/
 
 /* :tabSize=4:indentSize=4:noTabs=false:folding=explicit:collapseFolds=1: */
