@@ -1,7 +1,7 @@
-c84d9a8356e9d841d236d24f77baf2a2 *DESCRIPTION
+41d62610ada0806f057b5dc5e3798625 *DESCRIPTION
 cf870549fa078791ddfd7789c3f88fa0 *NAMESPACE
-abc8c2ca401da30bc437ad3c0bee7f10 *NEWS
-2ff73f02ee993b2ee978d222f33346a2 *R/parser.R
+fc6e763fa1c74c1bcd818483308a33fc *NEWS
+aaec4eca48edc41d5ce548800d161ee7 *R/parser.R
 87c6d8e38ae217750df031ab646213f7 *R/zzz.R
 56df9afef8e32aaf7b75eda2fc1b24bc *inst/example/f.R
 720c600ab421c9a05027449972c8eee8 *inst/grammar/gram.output
@@ -16,7 +16,7 @@ e2a0aab0ce08192792e122e1f897e37e *src/Makevars
 d15a8ebe9149ac415b5e909465ba6c87 *src/Makevars.win
 d2bf761ca4b9460f9cce00f908762eec *src/Module.cpp
 a2092d428a0905616a350e5197914805 *src/files.c
-96a93873232db5e1d480135d17748daf *src/gram.c
+b607f514b4d345ec244cc49cbaff4821 *src/gram.c
 343403c5d572a1ddd99df47e78ce2fd6 *src/io.c
 49ef9957a99735bc2d3a14b92f5e557b *src/parser.h
 4f1c09a98256596b96b3a63cdfd859ab *src/stretchyList.c
